@@ -65,5 +65,8 @@
     // Chrome Extension Specific Rules
     "no-eval": "error", // Avoid eval for security reasons
     "strict": ["error", "never"] // Avoid 'use strict' in ES Modules
+  },
+  "globals": {
+    "chrome": "readonly"
   }
 }
