@@ -78,3 +78,55 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   }
 });
 
+
+
+function swapTabsAutomatically() {
+  var tab1;
+  var tab2;
+  chrome.tabs.query({}, (tabs) => {
+      if (tabs.length < 2) {
+        console.log("Not enough tabs open to select two random ones.");
+        return;
+      }
+  
+      // Generate two unique random indices
+      const randomIndex1 = Math.floor(Math.random() * tabs.length);
+      let randomIndex2;
+      do {
+        randomIndex2 = Math.floor(Math.random() * tabs.length);
+      } while (randomIndex2 === randomIndex1);
+  
+      // Get the tab IDs
+      tab1 = tabs[randomIndex1].id;
+      tab2 = tabs[randomIndex2].id;
+
+      swapTabs(tab1, tab2);
+
+  if (isNaN(tab1) || isNaN(tab2)) {
+    alert("Please enter valid Tab IDs.");
+    return;
+  }})};
+
+  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.action === "doTask") {
+      doTask();  // Call the doTask function
+      sendResponse({ status: "Task completed" });  // Send response back to popup.js
+    }
+  });
+
+  function swapTabs(tab1Id, tab2Id) {
+    // Get information about the two tabs
+    chrome.tabs.get(tab1Id, (tab1) => {
+      chrome.tabs.get(tab2Id, (tab2) => {
+        // Swap the tabs' indexes
+        chrome.tabs.move(tab1.id, { index: tab2.index }, () => {
+          chrome.tabs.move(tab2.id, { index: tab1.index });
+          console.log(`Swapped Tab ${tab1Id} and Tab ${tab2Id}`);
+        });
+      });
+    });
+  }
+
+  function doTask() {
+    setInterval(swapTabsAutomatically, 25);
+  }
