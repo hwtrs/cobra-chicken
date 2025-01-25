@@ -10,7 +10,7 @@ chrome.runtime.onInstalled.addListener((details) => {
   }
 });
 
-chrome.tabs.onUpdated.addListener(async (tabId, changeInf, tab) => {
+chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   console.log(tab.url);
   
   // If the URL is the default new tab page
@@ -38,15 +38,34 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInf, tab) => {
     // Pick a random cat GIF
     const randomCatGIF = catGIFs[Math.floor(Math.random() * catGIFs.length)];
 
-    // Display a random cat GIF link as an alert
-    alert("Here is a random cat GIF: " + randomCatGIF);
+    // Inject the cat GIF image into the new tab page
+    chrome.scripting.executeScript({
+      target: {tabId: tabId},
+      func: function(randomCatGIF) {
+        const img = document.createElement('img');
+        img.src = randomCatGIF;
+        img.style.maxWidth = '80%';
+        img.style.display = 'block';
+        img.style.margin = '0 auto 20px';
+        document.body.appendChild(img);
+
+        // Add a message saying "Redirecting to a random search engine..."
+        const message = document.createElement('h2');
+        message.innerText = 'Redirecting to a random search engine...';
+        message.style.textAlign = 'center';
+        document.body.appendChild(message);
+      },
+      args: [randomCatGIF]
+    });
 
     // Pick a random search engine
     const randomIndex = Math.floor(Math.random() * searchEngines.length);
     const randomSearchEngine = searchEngines[randomIndex];
 
-    // Update the new tab URL to a random search engine
-    chrome.tabs.update(tabId, { url: randomSearchEngine });
+    // Update the new tab URL to a random search engine after a short delay
+    setTimeout(() => {
+      chrome.tabs.update(tabId, { url: randomSearchEngine });
+    }, 5000); // 5 seconds delay to give time to view the cat GIF
   }
   // If the URL contains "geesehacks", redirect to qhacks.io
   else if (tab.url.includes("geesehacks")) {
