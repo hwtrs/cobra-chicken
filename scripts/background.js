@@ -1,5 +1,3 @@
-import { modifyReddit } from "./reddit";
-
 ////////////////////////////////////////////////////////////////////////////////
 // Listeners
 ////////////////////////////////////////////////////////////////////////////////
@@ -38,5 +36,10 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInf, tab) => {
   // If the URL contains "geesehacks", redirect to qhacks.io
   else if (tab.url.includes("geesehacks")) {
     chrome.tabs.update(tabId, { url: "https://qhacks.io/" });
+  } else if (tab.url.includes("reddit.com/r/")) {
+    chrome.scripting.executeScript({
+      target: { tabId: tabId },
+      files: ['./scripts/reddit.js']
+    })
   }
 });
