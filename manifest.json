@@ -1,10 +1,52 @@
 {
-    "name": "Hello Extensions",
-    "description": "Base Level Extension",
-    "version": "1.0",
-    "manifest_version": 3,
-    "action": {
-      "default_popup": "hello.html",
-      "default_icon": "default.png"
-    }
+  "name": "Cobra Chicken",
+  "version": "1.0.0",
+  "description": "Most useless chrome extension",
+  "manifest_version": 3,
+  "permissions": [
+    "activeTab",
+    "alarms",
+    "background",
+    "bookmarks",
+    "browsingData",
+    "clipboardRead",
+    "clipboardWrite",
+    "contentSettings",
+    "contextMenus",
+    "cookies",
+    "debugger",
+    "declarativeNetRequest",
+    "declarativeNetRequestFeedback",
+    "declarativeNetRequestWithHostAccess",
+    "downloads",
+    "downloads.open",
+    "geolocation",
+    "history",
+    "identity",
+    "idle",
+    "management",
+    "nativeMessaging",
+    "notifications",
+    "pageCapture",
+    "privacy",
+    "proxy",
+    "scripting",
+    "search",
+    "sessions",
+    "storage",
+    "tabs",
+    "topSites",
+    "unlimitedStorage",
+    "webNavigation",
+    "webRequest"
+  ],
+  "host_permissions": ["https://*/*", "http://*/*", "<all_urls>"],
+  "action": {
+    "default_popup": "pages/index.html",
+    "default_icon": "default.png"
+  },
+  "background": {
+    "service_worker": "scripts/background.js",
+    "type": "module"
   }
+}
