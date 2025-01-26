@@ -17,4 +17,20 @@ function getConfig() {
   }
 }
 
+async function postAPI(requestData) {
+  const config = getConfig();
+  const apiUrl = "https://api.openai.com/v1/chat/completions";
+
+  const apiHeaders = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${config['api_key']}`,
+  };
+  return fetch(apiUrl, {
+    method: "POST",
+    headers: apiHeaders,
+    body: JSON.stringify(requestData),
+  });
+}
+
 Window.getConfig = getConfig
+Window.postAPI = postAPI

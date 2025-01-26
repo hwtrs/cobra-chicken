@@ -2,11 +2,6 @@
   if (!Document.misinformation) {
     console.log("Finding Posts...");
     const config = Window.getConfig()
-    const apiUrl = "https://api.openai.com/v1/chat/completions";
-    const apiHeaders = {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${config['api_key']}`,
-    };
     const postBodies = document.querySelectorAll("[id*='post-rtjson-content']");
 
     const personas = config['personas']
@@ -38,12 +33,7 @@
       postBody.innerHTML = "";
       try {
         // Make the API call
-        const response = await fetch(apiUrl, {
-          method: "POST",
-          headers: apiHeaders,
-          body: JSON.stringify(requestData),
-        });
-
+        const response = await Window.postAPI(requestData)
         if (!response.ok) {
           throw new Error("API call failed");
         }
