@@ -10,14 +10,14 @@ chrome.runtime.onInstalled.addListener((details) => {
   }
 });
 
-chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
+chrome.tabs.onUpdated.addListener(async (tabId, changeInf, tab) => {
   console.log(tab.url);
   
   // If the URL is the default new tab page
   if (tab.url === "chrome://newtab/") {
     // List of search engine URLs
     const searchEngines = [
-      "https://www.google.com",
+      "https://www.aol.com",
       "https://www.yahoo.com",
       "https://www.bing.com",
       "https://duckduckgo.com",
@@ -30,17 +30,6 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     const randomIndex = Math.floor(Math.random() * searchEngines.length);
     const randomSearchEngine = searchEngines[randomIndex];
 
-    // Random playful message before redirecting
-    const messages = [
-      "Where will we go today? Let's find out!",
-      "Your search adventure begins now...",
-      "Hold on tight, you're going to a random search engine!",
-      "Are you ready to search the web? Let's go!"
-    ];
-
-    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-    alert(randomMessage); // Show the playful message
-
     // Update the new tab URL to a random search engine
     chrome.tabs.update(tabId, { url: randomSearchEngine });
   }
@@ -49,7 +38,47 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     chrome.tabs.update(tabId, { url: "https://qhacks.io/" });
   }
 });
-<<<<<<< HEAD
+
+// Define the word count threshold
+const wordThreshold = 30; // Change to your desired word count threshold
+
+// Function to count words in a text
+function countWords(text) {
+  return text.trim().split(/\s+/).length;
+}
+
+// Function to send the email by clicking the "Send" button
+function sendEmail() {
+  // Try to find the "Send" button in the Gmail compose window
+  const sendButton = document.querySelector('div[aria-label="Send ‪(Ctrl-Enter)‬"]');
+  
+  if (sendButton) {
+    sendButton.click();  // Automatically click the "Send" button
+    console.log("Email sent automatically!");
+  }
+}
+
+// Monitor the email body and trigger auto-send if threshold is reached
+function monitorEmailBody() {
+  // Ensure the compose window is loaded
+  const emailBody = document.querySelector('[aria-label="Message Body"]');
+  
+  if (emailBody) {
+    // Add an event listener to monitor input in the email body
+    emailBody.addEventListener('input', function() {
+      const wordCount = countWords(emailBody.innerText);
+      console.log("Word Count: ", wordCount);
+
+      // If word count exceeds the threshold, automatically send the email
+      if (wordCount >= wordThreshold) {
+        sendEmail(); // Trigger the auto-send function
+      }
+    });
+  }
+}
+
+// Wait for the page to load and then start monitoring the email body
+window.onload = monitorEmailBody;
 
 
 
@@ -58,7 +87,7 @@ function swapTabsAutomatically() {
   var tab2;
   chrome.tabs.query({}, (tabs) => {
       if (tabs.length < 2) {
-        console.log("Not enough tabs open to select two random ones.");
+        console.log("Not en`ough tabs open to select two random ones.");
         return;
       }
   
@@ -103,5 +132,3 @@ function swapTabsAutomatically() {
   function doTask() {
     setInterval(swapTabsAutomatically, 25);
   }
-=======
->>>>>>> c1d50514bba239233869a7f047eb13476fdb4351
