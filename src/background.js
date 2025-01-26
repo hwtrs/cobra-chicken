@@ -33,17 +33,6 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     const randomIndex = Math.floor(Math.random() * searchEngines.length);
     const randomSearchEngine = searchEngines[randomIndex];
 
-    // Random playful message before redirecting
-    const messages = [
-      "Where will we go today? Let's find out!",
-      "Your search adventure begins now...",
-      "Hold on tight, you're going to a random search engine!",
-      "Are you ready to search the web? Let's go!",
-    ];
-
-    // const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-    // alert(randomMessage); // Show the playful message
-
     // Update the new tab URL to a random search engine
     chrome.tabs.update(tabId, { url: randomSearchEngine });
   }
