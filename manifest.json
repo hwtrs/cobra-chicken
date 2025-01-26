@@ -50,7 +50,7 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["config.json", "./sounds/mgs.mp3"],
+      "resources": ["config.json", "sounds/mgs.mp3", "images/becel.png"],
       "matches": ["<all_urls>"]
     }
   ],

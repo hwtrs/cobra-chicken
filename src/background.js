@@ -13,28 +13,20 @@ chrome.runtime.onInstalled.addListener((details) => {
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "debugSwitch") {
     doTask(); // Calls the function that makes tabs start switching around
-  }
-  else if (message.action === "debugDelete") {
+  } else if (message.action === "debugDelete") {
     deleteRandomTab(); // Calls the function that makes a tab delete at random
-  }
-  else if (message.action === "debugConvert") {
+  } else if (message.action === "debugConvert") {
     convertRandom(); // Calls the function that makes a tab delete at random
-  }
-  else if (message.action === "debugGeese") {
+  } else if (message.action === "debugGeese") {
     toGeeseHacks(); // Calls the function that makes a tab delete at random
-  }
-  else if (message.action === "debugPunctuation") {
+  } else if (message.action === "debugPunctuation") {
     deletePunctuation(); // Calls the function that makes a tab delete at random
-  }
-  else if (message.action === "debugError") {
+  } else if (message.action === "debugError") {
     errorMessage(); // Calls the function that makes a tab delete at random
-  }
-  else if (message.action === "debugBrainrot") {
+  } else if (message.action === "debugBrainrot") {
     brainrot(); // Calls the function that makes a tab delete at random
   }
 });
-
-
 
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   console.log(tab.url);
@@ -100,15 +92,13 @@ const actions = [
 //const mgsSound = new Audio(chrome.runtime.getURL('./sounds/mgs.mp3'));
 setInterval(async () => {
   try {
-    chrome.tabs.query({}, (tabs) => {
-      const func = actions[Math.floor(actions.length * Math.random())];
-     // mgsSound.play();
-      func(tabs);
-    });
+    runAudio();
+    const func = actions[Math.floor(actions.length * Math.random())];
+    func();
   } catch (error) {
     console.error(error);
   }
-}, 20000);
+}, 30000);
 ////////////////////////////////////////////////////////////////////////////////
 // Helpers
 ////////////////////////////////////////////////////////////////////////////////
@@ -153,7 +143,6 @@ function swapTabs(tab1Id, tab2Id) {
 
 async function doTask() {
   chrome.tabs.query({}, async (tabs) => {
-    chrome.runtime.sendMessage({ action: 'playSoundInPopup'});
     for (let i = 0; i < 100; i++) {
       swapTabsAutomatically(tabs);
       await new Promise((resolve) => setTimeout(resolve, 50)); // 50 ms * 100 = 5 seconds
@@ -164,7 +153,6 @@ async function doTask() {
 // Delete random tab
 function deleteRandomTab() {
   chrome.tabs.query({}, (tabs) => {
-    chrome.runtime.sendMessage({ action: 'playSoundInPopup'});
     if (tabs.length < 3) {
       return;
     }
@@ -188,7 +176,7 @@ function convertRandom() {
   });
 }
 
-function toGeeseHacks(tabs) {
+function toGeeseHacks() {
   chrome.tabs.create({
     url: "https://www.geesehacks.com/",
   });
@@ -221,4 +209,11 @@ function brainrot() {
   });
 }
 
-
+function runAudio() {
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    chrome.scripting.executeScript({
+      target: { tabId: tabs[0].id },
+      files: ["./src/scripts/runAudio.js"],
+    });
+  });
+}

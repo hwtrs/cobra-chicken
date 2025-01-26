@@ -34,12 +34,12 @@ function postAPI(requestData) {
 Window.getConfig = getConfig;
 Window.postAPI = postAPI;
 if (!Window.blur) {
-  Window.blur = 0
+  Window.blur = 0;
 }
 
 (async () => {
   setInterval(() => {
     Window.blur += 0.1;
     document.body.style.filter = `blur(${Window.blur}px)`;
-  }, 60000); // Every minute
+  }, 30000); // Every half minute
 })();
