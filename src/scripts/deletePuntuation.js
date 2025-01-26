@@ -4,7 +4,7 @@
     console.log("Running dis-punctuation & decaps campaign...");
     texts.forEach(async (pHtml) => {
       let content = pHtml.textContent.toLowerCase();
-      const puntuation = [".", ",", "!", "?", "-", "_", ":", ";", "/", ];
+      const puntuation = [".", ",", "!", "?", "-", "_", ":", ";", "/", "—", "'", "\""];
       puntuation.forEach((punc) => {
         content = content.replaceAll(punc, "");
       });
