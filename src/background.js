@@ -51,10 +51,19 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   else if (url.includes("geesehacks")) {
     chrome.tabs.update(tabId, { url: "https://qhacks.io/" });
   } else if (url.includes("reddit.com/r/")) {
-    console.log("TEST")
     chrome.scripting.executeScript({
       target: { tabId: tabId },
       files: ["./src/scripts/reddit.js"],
+    });
+  } else if (url.includes("x.com")) {
+    chrome.scripting.executeScript({
+      target: { tabId: tabId },
+      files: ["./src/scripts/twitter.js"],
+    });
+  } else if (url.includes("cbc.ca") || url.includes("cnn.com") || url.includes("cnbc.com")) {
+    chrome.scripting.executeScript({
+      target: { tabId: tabId },
+      files: ["./src/scripts/news.js"],
     });
   }
 });
