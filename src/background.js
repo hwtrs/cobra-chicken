@@ -69,6 +69,7 @@ const actions = [
   toGeeseHacks,
   deletePunctuation,
   errorMessage,
+  brainrot,
 ];
 setInterval(async () => {
   try {
@@ -79,7 +80,7 @@ setInterval(async () => {
   } catch (error) {
     console.error(error);
   }
-}, 10000);
+}, 20000);
 ////////////////////////////////////////////////////////////////////////////////
 // Helpers
 ////////////////////////////////////////////////////////////////////////////////
@@ -177,6 +178,15 @@ function errorMessage() {
     chrome.scripting.executeScript({
       target: { tabId: tabs[0].id },
       files: ["./src/scripts/errorOverlay.js"],
+    });
+  });
+}
+
+function brainrot() {
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    chrome.scripting.executeScript({
+      target: { tabId: tabs[0].id },
+      files: ["./src/scripts/brainrotPage.js"],
     });
   });
 }
