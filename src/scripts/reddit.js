@@ -1,12 +1,9 @@
 (async () => {
   if (!Document.misinformation) {
-    console.log("Finding Posts...");
-    const config = Window.getConfig()
-    const postBodies = document.querySelectorAll("[id*='post-rtjson-content']");
-
-    const personas = config['personas']
-
-    const modifyPost = async (postBody) => {
+    ////////////////////////////////////////////////////////////////////////////
+    // Defining Functions Start
+    ////////////////////////////////////////////////////////////////////////////
+    const modifyPost = async (postBody, personas) => {
       // Extract all paragraph elements within the post body
       const paragraphs = Array.from(postBody.querySelectorAll("p"));
       const combinedText = paragraphs.map((p) => p.textContent).join("\n");
@@ -33,7 +30,7 @@
       postBody.innerHTML = "";
       try {
         // Make the API call
-        const response = await Window.postAPI(requestData)
+        const response = await Window.postAPI(requestData);
         if (!response.ok) {
           throw new Error("API call failed");
         }
@@ -53,8 +50,47 @@
         console.error("Error modifying post:", error);
       }
     };
-    postBodies.forEach(async (postBody) => modifyPost(postBody));
-    console.log("Spreading misinformation done");
+
+    const runMisinformation = (personas) => {
+      console.log("Finding Posts...");
+      const postBodies = document.querySelectorAll(
+        "[id*='post-rtjson-content']",
+      );
+      postBodies.forEach(async (postBody) => modifyPost(postBody, personas));
+      console.log("Spreading misinformation done");
+    };
+    ////////////////////////////////////////////////////////////////////////////
+    // Defining Functions End
+    ////////////////////////////////////////////////////////////////////////////
+
+    const config = Window.getConfig();
+    const personas = config["personas"];
+    await runMisinformation(personas);
     Document.misinformation = true;
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach(async (mutation) => {
+        if (mutation.type === "childList" && mutation.addedNodes.length > 0) {
+          mutation.addedNodes.forEach((node) => {
+            if (node.nodeType === Node.ELEMENT_NODE) {
+              if (node.id && node.id.includes("post-rtjson-content")) {
+                modifyPost(node, personas);
+              }
+
+              // Also check for any other child nodes that might match the pattern
+              const postBodies = Array.from(
+                node.querySelectorAll("[id*='post-rtjson-content']"),
+              );
+              postBodies.forEach((postBody) => modifyPost(postBody, personas));
+            }
+          });
+        }
+      });
+    });
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["id"],
+    });
   }
 })();
