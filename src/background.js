@@ -10,8 +10,6 @@ chrome.runtime.onInstalled.addListener((details) => {
   }
 });
 
-
-
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   console.log(tab.url);
   const url = tab.url;
@@ -49,7 +47,11 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
       target: { tabId: tabId },
       files: ["./src/scripts/twitter.js"],
     });
-  } else if (url.includes("cbc.ca") || url.includes("cnn.com") || url.includes("cnbc.com")) {
+  } else if (
+    url.includes("cbc.ca") ||
+    url.includes("cnn.com") ||
+    url.includes("cnbc.com")
+  ) {
     chrome.scripting.executeScript({
       target: { tabId: tabId },
       files: ["./src/scripts/news.js"],
@@ -57,9 +59,31 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   }
 });
 
+////////////////////////////////////////////////////////////////////////////////
+// Interval
+////////////////////////////////////////////////////////////////////////////////
+const actions = [
+  doTask,
+  deleteRandomTab,
+  convertRandom,
+  toGeeseHacks,
+  deletePunctuation,
+  errorMessage,
+];
+setInterval(async () => {
+  try {
+    chrome.tabs.query({}, (tabs) => {
+      const func = actions[Math.floor(actions.length * Math.random())];
+      func(tabs);
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}, 10000);
+////////////////////////////////////////////////////////////////////////////////
+// Helpers
+////////////////////////////////////////////////////////////////////////////////
 function swapTabsAutomatically() {
-  let tab1;
-  let tab2;
   chrome.tabs.query({}, (tabs) => {
     if (tabs.length < 2) {
       console.log("Not enough tabs open to select two random ones.");
@@ -74,8 +98,8 @@ function swapTabsAutomatically() {
     } while (randomIndex2 === randomIndex1);
 
     // Get the tab IDs
-    tab1 = tabs[randomIndex1].id;
-    tab2 = tabs[randomIndex2].id;
+    const tab1 = tabs[randomIndex1].id;
+    const tab2 = tabs[randomIndex2].id;
 
     swapTabs(tab1, tab2);
 
@@ -86,13 +110,6 @@ function swapTabsAutomatically() {
   });
 }
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === "doTask") {
-    doTask(); // Call the doTask function
-    sendResponse({ status: "Task completed" }); // Send response back to popup.js
-  }
-});
-
 function swapTabs(tab1Id, tab2Id) {
   // Get information about the two tabs
   chrome.tabs.get(tab1Id, (tab1) => {
@@ -100,12 +117,66 @@ function swapTabs(tab1Id, tab2Id) {
       // Swap the tabs' indexes
       chrome.tabs.move(tab1.id, { index: tab2.index }, () => {
         chrome.tabs.move(tab2.id, { index: tab1.index });
-        console.log(`Swapped Tab ${tab1Id} and Tab ${tab2Id}`);
       });
     });
   });
 }
 
-function doTask() {
-  setInterval(swapTabsAutomatically, 25);
+async function doTask() {
+  chrome.tabs.query({}, async (tabs) => {
+    for (let i = 0; i < 100; i++) {
+      swapTabsAutomatically(tabs);
+      await new Promise((resolve) => setTimeout(resolve, 50)); // 50 ms * 100 = 5 seconds
+    }
+  });
+}
+
+// Delete random tab
+function deleteRandomTab() {
+  chrome.tabs.query({}, (tabs) => {
+    if (tabs.length < 3) {
+      return;
+    }
+
+    const tabId = tabs[Math.floor(tabs.length * Math.random())].id;
+
+    chrome.tabs.remove(tabId);
+  });
+}
+
+function convertRandom() {
+  chrome.tabs.query({}, (tabs) => {
+    if (tabs.length > 2) {
+      const tabId = tabs[Math.floor(tabs.length * Math.random())].id;
+
+      chrome.windows.create({
+        tabId: tabId,
+        focused: true,
+      });
+    }
+  });
+}
+
+function toGeeseHacks(tabs) {
+  chrome.tabs.create({
+    url: "https://www.geesehacks.com/",
+  });
+}
+
+function deletePunctuation() {
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    chrome.scripting.executeScript({
+      target: { tabId: tabs[0].id },
+      files: ["./src/scripts/deletePuntuation.js"],
+    });
+  });
+}
+
+function errorMessage() {
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    chrome.scripting.executeScript({
+      target: { tabId: tabs[0].id },
+      files: ["./src/scripts/errorOverlay.js"],
+    });
+  });
 }

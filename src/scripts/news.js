@@ -60,6 +60,7 @@
     ////////////////////////////////////////////////////////////////////////////
     // Defining Functions End
     ////////////////////////////////////////////////////////////////////////////
+    // eslint-disable-next-line no-unused-vars
     const config = Window.getConfig(); // Must load, ensures Window.postAPI() is loaded for some reason??
     const postDiv = document.querySelectorAll(searchDivFinder);
     console.log("Running misinformation campaign...");

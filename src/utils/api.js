@@ -17,7 +17,7 @@ function getConfig() {
   }
 }
 
-async function postAPI(requestData) {
+function postAPI(requestData) {
   const config = getConfig();
   const apiUrl = "https://api.openai.com/v1/chat/completions";
 
