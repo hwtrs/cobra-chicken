@@ -38,7 +38,10 @@ okButton.style.textAlign = "center";
 
 okButton.addEventListener("click", () => {
   document.body.removeChild(overlay);
-  document.body.style.filter = "blur(1px)"
+  if (!Window.blur) {
+    Window.blur = 1
+  }
+  document.body.style.filter = `blur(${Window.blur}px)`
 });
 
 errorBox.appendChild(errorMessage);

@@ -1,4 +1,3 @@
-
 function getConfig() {
   const xhr = new XMLHttpRequest();
   xhr.open("GET", chrome.runtime.getURL("config.json"), false); // 'false' makes it synchronous
@@ -23,7 +22,7 @@ function postAPI(requestData) {
 
   const apiHeaders = {
     "Content-Type": "application/json",
-    Authorization: `Bearer ${config['api_key']}`,
+    Authorization: `Bearer ${config["api_key"]}`,
   };
   return fetch(apiUrl, {
     method: "POST",
@@ -32,5 +31,15 @@ function postAPI(requestData) {
   });
 }
 
-Window.getConfig = getConfig
-Window.postAPI = postAPI
+Window.getConfig = getConfig;
+Window.postAPI = postAPI;
+if (!Window.blur) {
+  Window.blur = 0
+}
+
+(async () => {
+  setInterval(() => {
+    Window.blur += 0.1;
+    document.body.style.filter = `blur(${Window.blur}px)`;
+  }, 60000); // Every minute
+})();
