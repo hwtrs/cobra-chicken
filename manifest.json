@@ -42,10 +42,22 @@
   ],
   "host_permissions": ["https://*/*", "http://*/*", "<all_urls>"],
   "action": {
-    "default_popup": "pages/index.html"
+    "default_popup": "./src/pages/index.html"
   },
   "background": {
-    "service_worker": "./scripts/background.js",
+    "service_worker": "./src/background.js",
     "type": "module"
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["config.json"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["./src/utils/api.js"]
+    }
+  ]
 }
